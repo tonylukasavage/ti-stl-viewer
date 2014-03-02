@@ -1,0 +1,30 @@
+{
+  "name": "ti-stl-viewer",
+  "version": "0.0.1",
+  "description": "Render and interact with 3D STL models in your Titanium Alloy apps",
+  "bugs": {
+    "url": "https://github.com/tonylukasavage/ti-stl-viewer/issues",
+    "email": "anthony.lukasavage@gmail.com"
+  },
+  "author": {
+    "name": "Tony Lukasavage",
+    "email": "anthony.lukasavage@gmail.com",
+    "url": "http://tonylukasavage.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tonylukasavage/ti-stl-viewer.git"
+  },
+  "main": "./lib/ti-stl-viewer.js",
+  "engines": {
+    "node": ">=0.10"
+  },
+  "license": "MIT",
+  "keywords": [
+    "3d",
+    "stl",
+    "titanium",
+    "appcelerator",
+    "alloy"
+  ]
+}
