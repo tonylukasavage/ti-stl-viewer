@@ -1,0 +1,5 @@
+'#index': {
+	backgroundColor: '#fff',
+	fullscreen: true,
+	exitOnClose: true
+}

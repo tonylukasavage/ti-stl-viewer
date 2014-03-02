@@ -1,0 +1,5 @@
+'#viewer': {
+	url: WPATH('viewer.html'),
+	height: Ti.UI.FILL,
+	width: Ti.UI.FILL
+}
