@@ -10,5 +10,7 @@
 		"afterEach": false,
 		"should": false
 	},
+	"expr": true,
+	"unused": false,
 	"node": true
 }

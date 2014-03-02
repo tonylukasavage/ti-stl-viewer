@@ -26,5 +26,11 @@
     "titanium",
     "appcelerator",
     "alloy"
-  ]
+  ],
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-mocha-test": "~0.9.4",
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-contrib-clean": "~0.5.0"
+  }
 }
