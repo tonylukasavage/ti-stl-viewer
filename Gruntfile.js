@@ -1,4 +1,5 @@
-var path = require('path'),
+var fs = require('fs'),
+	path = require('path'),
 	wrench = require('wrench');
 
 var NAME = 'ti-stl-viewer',
@@ -62,11 +63,15 @@ module.exports = function(grunt) {
 	grunt.registerTask('load-app', 'Load source files into example alloy app', function() {
 		var srcDir = path.join('test', 'app'),
 			dstDir = path.join(TMP_DIR, 'app'),
+			assetsDir = path.join(dstDir, 'assets'),
+			tmpAssetsDir = path.join(TMP_DIR, 'assets'),
 			widgetsDir = path.join(dstDir, 'widgets', NAME);
 
 		// copy app source files
 		grunt.log.write('Copying "%s" to "%s"... ', srcDir, dstDir);
+		fs.renameSync(assetsDir, tmpAssetsDir);
 		wrench.copyDirSyncRecursive(srcDir, dstDir, { forceDelete: true });
+		fs.renameSync(tmpAssetsDir, assetsDir);
 		grunt.log.ok();
 
 		// copy in widget
