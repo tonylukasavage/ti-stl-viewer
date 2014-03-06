@@ -1,11 +1,19 @@
 {
-	"id": "ti-stl-viewer",
-	"name": "ti-stl-viewer",
-	"version": "0.0.1",
-	"platforms": "android,blackberry,ios,mobileweb",
-	"min-alloy-version": "1.3.0",
-	"min-titanium-version": "3.2.0",
-	"description": "Render and interact with 3D STL models in your Titanium Alloy apps",
-	"author": "Tony Lukasavage",
-	"license": "MIT"
+  "name": "ti-stl-viewer",
+  "id": "ti-stl-viewer",
+  "description": "Render and interact with 3D STL models in your Titanium Alloy apps",
+  "version": "0.0.1",
+  "author": {
+    "name": "Tony Lukasavage",
+    "email": "anthony.lukasavage@gmail.com",
+    "url": "http://tonylukasavage.com"
+  },
+  "license": "MIT",
+  "platforms": [
+    "android",
+    "blackberry",
+    "ios",
+    "mobileweb"
+  ],
+  "min-alloy-version": "1.0.0"
 }

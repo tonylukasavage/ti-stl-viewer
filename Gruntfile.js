@@ -23,7 +23,7 @@ module.exports = function(grunt) {
 			options: {
 				jshintrc: true
 			},
-			src: ['**/*.js']
+			src: ['Gruntfile.js', 'ti-stl-viewer/**/.js', 'test/**/*.js']
 		},
 		titanium: {
 			create: {
@@ -84,8 +84,29 @@ module.exports = function(grunt) {
 
 	});
 
+	// create widget.json from package.json
+	grunt.registerTask('widget.json', 'create widget.json from package.json', function() {
+		var pkg = require('./package'),
+			root = pkg[pkg.name] || {},
+			widget = {
+				name: pkg.name,
+				id: pkg.name,
+				description: pkg.description,
+				version: pkg.version,
+				author: pkg.author,
+				license: pkg.license,
+				platforms: root.platforms || [],
+				'min-alloy-version': '1.0.0'
+			},
+			dst = path.join(NAME, 'widget.json');
+
+		grunt.log.write('Writing widget.json to "%s"... ', dst);
+		fs.writeFileSync(dst, JSON.stringify(widget, null, 2));
+		grunt.log.ok();
+	});
+
 	// run example app
-	grunt.registerTask('test-run', ['clean', 'titanium:create', 'alloy', 'load-app', 'titanium:build']);
+	grunt.registerTask('test-run', ['clean', 'titanium:create', 'alloy', 'widget.json', 'load-app', 'titanium:build']);
 
 	// run tests
 	grunt.registerTask('test', ['mochaTest', 'clean']);
