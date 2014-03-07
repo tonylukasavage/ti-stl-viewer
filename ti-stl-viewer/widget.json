@@ -9,11 +9,6 @@
     "url": "http://tonylukasavage.com"
   },
   "license": "MIT",
-  "platforms": [
-    "android",
-    "blackberry",
-    "ios",
-    "mobileweb"
-  ],
+  "platforms": "android,blackberry,ios,mobileweb",
   "min-alloy-version": "1.0.0"
 }
