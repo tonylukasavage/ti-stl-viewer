@@ -22,8 +22,8 @@
 		var isLittleEndian = true;
 		var triangles = dv.getUint32(0, isLittleEndian);
 
-		console.log('arraybuffer length:  ' + stl.byteLength);
-		console.log('number of triangles: ' + triangles);
+		// console.log('arraybuffer length:  ' + stl.byteLength);
+		// console.log('number of triangles: ' + triangles);
 
 		var offset = 4;
 		for (var i = 0; i < triangles; i++) {
@@ -173,9 +173,6 @@
 							parseFloat(parts[3]),
 							parseFloat(parts[4])
 						];
-						if (vCount % 1000 === 0) {
-							console.log(normal);
-						}
 						state = 'facet normal';
 					} else {
 						console.error(line);
@@ -216,7 +213,6 @@
 			if ( xhr.readyState == 4 ) {
 				if ( xhr.status == 200 || xhr.status == 0 ) {
 					var rep = xhr.response; // || xhr.mozResponseArrayBuffer;
-					//console.log(rep);
 					parseStlBinary(rep);
 					//parseStlAscii(xhr.responseText);
 					mesh.rotation.x = 5;
