@@ -235,7 +235,7 @@
 			console.log(e);
 		};
 
-		xhr.open( "GET", '../test.stl', true );
+		xhr.open( "GET", '../test-binary.stl', true );
 
 		// for binary
 		xhr.responseType = "arraybuffer";
