@@ -1,5 +1,8 @@
-;(function() {
-	var camera, scene, renderer, geometry, material, mesh, light1, stats;
+/* jshint -W032 */
+;
+/* jshint +W032 */
+(function() {
+	var camera, scene, renderer, mesh, stats;
 
 	function trim (str) {
 		str = str.replace(/^\s+/, '');
@@ -16,7 +19,7 @@
 	// - STL file format: http://en.wikipedia.org/wiki/STL_(file_format)
 	// - 80 byte unused header
 	// - All binary STLs are assumed to be little endian, as per wiki doc
-	var parseStlBinary = function(stl) {
+	function parseStlBinary(stl) {
 		var geo = new THREE.Geometry();
 		var dv = new DataView(stl, 80); // 80 == unused header
 		var isLittleEndian = true;
@@ -77,13 +80,13 @@
 		scene.add(mesh);
 
 		stl = null;
-	};
+	}
 
-	var parseStlAscii = function(stl) {
+	function parseStlAscii(stl) {
 		var state = '';
 		var lines = stl.split('\n');
 		var geo = new THREE.Geometry();
-		var name, parts, line, normal, done, vertices = [];
+		var name, parts, line, normal, done;
 		var vCount = 0;
 		stl = null;
 
@@ -185,7 +188,12 @@
 					break;
 			}
 		}
-	};
+	}
+
+	// only handle binary for the moment
+	function isBinaryStl(data) {
+		return true;
+	}
 
 	init();
 	animate();
@@ -213,8 +221,11 @@
 			if ( xhr.readyState === 4 ) {
 				if ( xhr.status === 200 || xhr.status === 0 ) {
 					var rep = xhr.response; // || xhr.mozResponseArrayBuffer;
-					parseStlBinary(rep);
-					//parseStlAscii(xhr.responseText);
+					if (isBinaryStl()) {
+						parseStlBinary(rep);
+					} else {
+						parseStlAscii(xhr.responseText);
+					}
 					mesh.rotation.x = 5;
 					mesh.rotation.z = 0.25;
 				}
@@ -225,10 +236,15 @@
 		};
 
 		xhr.open( "GET", '../test.stl', true );
+
+		// for binary
 		xhr.responseType = "arraybuffer";
+
+		// for ascii
 		//xhr.setRequestHeader("Accept","text/plain");
 		//xhr.setRequestHeader("Content-Type","text/plain");
 		//xhr.setRequestHeader('charset', 'x-user-defined');
+
 		xhr.send( null );
 
 		renderer = new THREE.CanvasRenderer(); //new THREE.WebGLRenderer();
