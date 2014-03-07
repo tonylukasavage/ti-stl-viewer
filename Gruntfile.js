@@ -66,7 +66,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-alloy');
 
 	// load test app
-	grunt.registerTask('load-app', 'Load source files into example alloy app', function() {
+	grunt.registerTask('copy-files', 'Load source files into example alloy app', function() {
 		var srcDir = path.join('test', 'app'),
 			dstDir = path.join(TMP_DIR, 'app'),
 			assetsDir = path.join(dstDir, 'assets'),
@@ -74,7 +74,7 @@ module.exports = function(grunt) {
 			widgetsDir = path.join(dstDir, 'widgets', NAME);
 
 		// copy app source files
-		grunt.log.write('Copying "%s" to "%s"... ', srcDir, dstDir);
+		grunt.log.write('Copying "%s" to "%s"...', srcDir, dstDir);
 		fs.renameSync(assetsDir, tmpAssetsDir);
 		wrench.copyDirSyncRecursive(srcDir, dstDir, { forceDelete: true });
 		fs.renameSync(tmpAssetsDir, assetsDir);
@@ -82,7 +82,7 @@ module.exports = function(grunt) {
 		grunt.log.ok();
 
 		// copy in widget
-		grunt.log.write('Copying %s widget to "%s"... ', NAME, widgetsDir);
+		grunt.log.write('Copying %s widget to "%s"...', NAME, widgetsDir);
 		wrench.mkdirSyncRecursive(widgetsDir);
 		wrench.copyDirSyncRecursive(NAME, widgetsDir, { forceDelete: true });
 		grunt.log.ok();
@@ -101,22 +101,28 @@ module.exports = function(grunt) {
 				author: pkg.author,
 				license: pkg.license,
 				platforms: root.platforms || [],
-				'min-alloy-version': '1.0.0'
+				'min-alloy-version': root['min-alloy-version'] || '1.0.0'
 			},
 			dst = path.join(NAME, 'widget.json');
 
-		grunt.log.write('Writing widget.json to "%s"... ', dst);
+		grunt.log.write('Writing widget.json to "%s"...', dst);
 		fs.writeFileSync(dst, JSON.stringify(widget, null, 2));
 		grunt.log.ok();
 	});
 
+	// create test alloy app
+	grunt.registerTask('app-create', ['clean', 'titanium:create', 'alloy']);
+
+	// prepare test app
+	grunt.registerTask('app-prep', ['widget.json', 'copy-files']);
+
 	// run example app
-	grunt.registerTask('test-run', ['clean', 'titanium:create', 'alloy', 'widget.json', 'load-app', 'titanium:build']);
+	grunt.registerTask('app-test', ['app-create', 'app-prep', 'titanium:build']);
 
 	// run tests
 	grunt.registerTask('test', ['mochaTest', 'clean']);
 
 	// Register tasks
-	grunt.registerTask('default', ['jshint', 'widget.json', 'test']);
+	grunt.registerTask('default', ['widget.json', 'jshint', 'test']);
 
 };
