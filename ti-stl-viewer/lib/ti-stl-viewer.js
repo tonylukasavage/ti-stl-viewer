@@ -1,24 +1,19 @@
+// Notes:
+// - STL file format: http://en.wikipedia.org/wiki/STL_(file_format)
+// - 80 byte unused header
+// - All binary STLs are assumed to be little endian, as per wiki doc
+
 /* jshint -W032 */
 ;
 /* jshint +W032 */
 (function() {
 	var camera, scene, renderer, mesh, stats;
 
-	function trim (str) {
-		str = str.replace(/^\s+/, '');
-		for (var i = str.length - 1; i >= 0; i--) {
-			if (/\S/.test(str.charAt(i))) {
-				str = str.substring(0, i + 1);
-				break;
-			}
-		}
-		return str;
-	}
+	// listen for the load event
+	Ti.App.addEventListener('ti-stl-viewer:load', function(e) {
+		Ti.API.info('load: ' + JSON.stringify(e, null, 2));
+	});
 
-	// Notes:
-	// - STL file format: http://en.wikipedia.org/wiki/STL_(file_format)
-	// - 80 byte unused header
-	// - All binary STLs are assumed to be little endian, as per wiki doc
 	function parseStlBinary(stl) {
 		var geo = new THREE.Geometry();
 		var dv = new DataView(stl, 80); // 80 == unused header
@@ -204,17 +199,17 @@
 
 		scene = new THREE.Scene();
 
-		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+		camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 10000);
 		camera.position.z = 70;
 		camera.position.y = 0;
-		scene.add( camera );
+		scene.add(camera);
 
 		var directionalLight = new THREE.DirectionalLight( 0xffffff );
 		directionalLight.position.x = 0;
 		directionalLight.position.y = 0;
 		directionalLight.position.z = 1;
 		directionalLight.position.normalize();
-		scene.add( directionalLight );
+		scene.add(directionalLight);
 
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function () {
@@ -235,7 +230,7 @@
 			console.log(e);
 		};
 
-		xhr.open( "GET", '../test-binary.stl', true );
+		xhr.open('GET', '../test-binary.stl', true);
 
 		// for binary
 		xhr.responseType = "arraybuffer";
@@ -245,12 +240,12 @@
 		//xhr.setRequestHeader("Content-Type","text/plain");
 		//xhr.setRequestHeader('charset', 'x-user-defined');
 
-		xhr.send( null );
+		xhr.send(null);
 
 		renderer = new THREE.CanvasRenderer(); //new THREE.WebGLRenderer();
-		renderer.setSize( window.innerWidth, window.innerHeight );
+		renderer.setSize(window.innerWidth, window.innerHeight);
 
-		document.body.appendChild( renderer.domElement );
+		document.body.appendChild(renderer.domElement);
 
 		stats = new Stats();
 		stats.domElement.style.position = 'absolute';
@@ -260,17 +255,28 @@
 
 	function animate() {
 		// note: three.js includes requestAnimationFrame shim
-		requestAnimationFrame( animate );
+		requestAnimationFrame(animate);
 		render();
 		stats.update();
 	}
 
 	function render() {
-		mesh.rotation.x += 0.01;
 		if (mesh) {
+			mesh.rotation.x += 0.01;
 			mesh.rotation.z += 0.02;
 		}
-		renderer.render( scene, camera );
+		renderer.render(scene, camera);
+	}
+
+	function trim (str) {
+		str = str.replace(/^\s+/, '');
+		for (var i = str.length - 1; i >= 0; i--) {
+			if (/\S/.test(str.charAt(i))) {
+				str = str.substring(0, i + 1);
+				break;
+			}
+		}
+		return str;
 	}
 
 })();
