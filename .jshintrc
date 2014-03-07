@@ -27,6 +27,7 @@
 		"after": false,
 		"afterEach": false,
 		"should": false,
-		"$": false
+		"$": false,
+		"THREE": false
 	}
 }
