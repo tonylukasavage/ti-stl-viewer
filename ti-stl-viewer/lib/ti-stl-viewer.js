@@ -210,19 +210,19 @@
 
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function () {
-			if ( xhr.readyState == 4 ) {
-				if ( xhr.status == 200 || xhr.status == 0 ) {
+			if ( xhr.readyState === 4 ) {
+				if ( xhr.status === 200 || xhr.status === 0 ) {
 					var rep = xhr.response; // || xhr.mozResponseArrayBuffer;
 					parseStlBinary(rep);
 					//parseStlAscii(xhr.responseText);
 					mesh.rotation.x = 5;
-					mesh.rotation.z = .25;
+					mesh.rotation.z = 0.25;
 				}
 			}
-		}
+		};
 		xhr.onerror = function(e) {
 			console.log(e);
-		}
+		};
 
 		xhr.open( "GET", '../test.stl', true );
 		xhr.responseType = "arraybuffer";
