@@ -243,23 +243,18 @@
 	}
 
 	function animate() {
-
 		// note: three.js includes requestAnimationFrame shim
 		requestAnimationFrame( animate );
 		render();
 		stats.update();
-
 	}
 
 	function render() {
-
-			mesh.rotation.x += 0.01;
-			if (mesh) {
-				mesh.rotation.z += 0.02;
-			}
-			//light1.position.z -= 1;
-
-			renderer.render( scene, camera );
-
+		mesh.rotation.x += 0.01;
+		if (mesh) {
+			mesh.rotation.z += 0.02;
+		}
+		renderer.render( scene, camera );
 	}
+
 })();
