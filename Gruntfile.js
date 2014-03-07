@@ -3,7 +3,7 @@ var fs = require('fs'),
 	wrench = require('wrench');
 
 var NAME = 'ti-stl-viewer',
-	MODEL = 'test.stl',
+	MODELS = ['test-binary.stl', 'test-ascii.stl'],
 	TMP_DIR = 'tmp';
 
 module.exports = function(grunt) {
@@ -78,7 +78,9 @@ module.exports = function(grunt) {
 		fs.renameSync(assetsDir, tmpAssetsDir);
 		wrench.copyDirSyncRecursive(srcDir, dstDir, { forceDelete: true });
 		fs.renameSync(tmpAssetsDir, assetsDir);
-		fs.writeFileSync(path.join(assetsDir, MODEL), fs.readFileSync(path.join('test', MODEL)));
+		MODELS.forEach(function(model) {
+			fs.writeFileSync(path.join(assetsDir, model), fs.readFileSync(path.join('test', model)));
+		});
 		grunt.log.ok();
 
 		// copy in widget
