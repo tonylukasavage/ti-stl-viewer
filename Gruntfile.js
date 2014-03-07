@@ -23,7 +23,7 @@ module.exports = function(grunt) {
 			options: {
 				jshintrc: true
 			},
-			src: ['Gruntfile.js', 'ti-stl-viewer/**/.js', 'test/**/*.js']
+			src: ['Gruntfile.js', 'ti-stl-viewer/**/*.js', 'test/**/*.js']
 		},
 		titanium: {
 			create: {
