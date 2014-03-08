@@ -7,12 +7,107 @@
 ;
 /* jshint +W032 */
 (function() {
-	var camera, scene, renderer, mesh, stats;
+	var camera, scene, renderer, mesh, stats, stlLocation;
 
-	// listen for the load event
-	Ti.App.addEventListener('ti-stl-viewer:load', function(e) {
-		Ti.API.info('load: ' + JSON.stringify(e, null, 2));
-	});
+	// let's light this candle...
+	init();
+	animate();
+
+	function animate() {
+		// note: three.js includes requestAnimationFrame shim
+		requestAnimationFrame(animate);
+		render();
+		stats.update();
+	}
+
+	function getStl(format) {
+		if (!format || (format !== 'ascii' && format !== 'binary')) {
+			throw new Error('Invalid stl format "' + format + '". Must be "ascii" or "binary"');
+		}
+
+		// create xhr
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState === 4) {
+				if (xhr.status === 200 || xhr.status === 0) {
+					// xhr.mozResponseArrayBuffer;
+					if (format === 'binary') {
+						parseStlBinary(xhr.response);
+					} else if (format === 'ascii') {
+						parseStlAscii(xhr.responseText);
+					}
+				}
+			}
+		};
+		xhr.onerror = function(e) {
+			throw new Error(e);
+		};
+
+		// open get request
+		xhr.open('GET', stlLocation, true);
+
+		// set headers based on format
+		if (format === 'binary') {
+			xhr.responseType = "arraybuffer";
+		} else {
+			xhr.setRequestHeader("Accept","text/plain");
+			xhr.setRequestHeader("Content-Type","text/plain");
+			xhr.setRequestHeader('charset', 'x-user-defined');
+		}
+
+		// send request
+		xhr.send(null);
+	}
+
+	// initialize the 3D scene
+	function init() {
+
+		// listen for the load event
+		Ti.App.addEventListener('ti-stl-viewer:load', function(e) {
+			Ti.API.debug('"' + e.type + '" fired with ' + JSON.stringify(e));
+
+			// Determine what stl location to use
+			if (!e.stl && !stlLocation) { return; }
+			stlLocation = '../' + (e.stl || stlLocation).replace(/^\//, '');
+			Ti.API.info('loading stl at "' + stlLocation + '"');
+
+			// retrieve the stl
+			var format = e.format || 'binary';
+			getStl(format);
+
+		});
+
+		// create the three.js scene
+		scene = new THREE.Scene();
+
+		// configure the camera
+		camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 10000);
+		camera.position.z = 70;
+		camera.position.y = 0;
+		scene.add(camera);
+
+		// configure a basic directional light for the scene
+		var directionalLight = new THREE.DirectionalLight(0xffffff);
+		directionalLight.position.x = 0;
+		directionalLight.position.y = 0;
+		directionalLight.position.z = 1;
+		directionalLight.position.normalize();
+		scene.add(directionalLight);
+
+		// Create a renderer element. We'll favor WebGL, but often will
+		// need to fall back to the Canvas.
+		renderer = new THREE.CanvasRenderer(); //new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+
+		// Add the rendering stats (FPS and such) to the display
+		stats = new Stats();
+		stats.domElement.style.position = 'absolute';
+		stats.domElement.style.top = '0px';
+		document.body.appendChild(stats.domElement);
+	}
+
+
 
 	function parseStlBinary(stl) {
 		var geo = new THREE.Geometry();
@@ -158,7 +253,7 @@
 						mesh = new THREE.Mesh(
 							geo,
 							new THREE.MeshLambertMaterial({
-								overdraw:true,
+								overdraw: false,
 								color: 0xaa0000,
 								shading: THREE.FlatShading
 							}
@@ -183,81 +278,6 @@
 					break;
 			}
 		}
-	}
-
-	// only handle binary for the moment
-	function isBinaryStl(data) {
-		return true;
-	}
-
-	init();
-	animate();
-
-	function init() {
-
-		//Detector.addGetWebGLMessage();
-
-		scene = new THREE.Scene();
-
-		camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 10000);
-		camera.position.z = 70;
-		camera.position.y = 0;
-		scene.add(camera);
-
-		var directionalLight = new THREE.DirectionalLight( 0xffffff );
-		directionalLight.position.x = 0;
-		directionalLight.position.y = 0;
-		directionalLight.position.z = 1;
-		directionalLight.position.normalize();
-		scene.add(directionalLight);
-
-		var xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = function () {
-			if ( xhr.readyState === 4 ) {
-				if ( xhr.status === 200 || xhr.status === 0 ) {
-					var rep = xhr.response; // || xhr.mozResponseArrayBuffer;
-					if (isBinaryStl()) {
-						parseStlBinary(rep);
-					} else {
-						parseStlAscii(xhr.responseText);
-					}
-					mesh.rotation.x = 5;
-					mesh.rotation.z = 0.25;
-				}
-			}
-		};
-		xhr.onerror = function(e) {
-			console.log(e);
-		};
-
-		xhr.open('GET', '../test-binary.stl', true);
-
-		// for binary
-		xhr.responseType = "arraybuffer";
-
-		// for ascii
-		//xhr.setRequestHeader("Accept","text/plain");
-		//xhr.setRequestHeader("Content-Type","text/plain");
-		//xhr.setRequestHeader('charset', 'x-user-defined');
-
-		xhr.send(null);
-
-		renderer = new THREE.CanvasRenderer(); //new THREE.WebGLRenderer();
-		renderer.setSize(window.innerWidth, window.innerHeight);
-
-		document.body.appendChild(renderer.domElement);
-
-		stats = new Stats();
-		stats.domElement.style.position = 'absolute';
-		stats.domElement.style.top = '0px';
-		document.body.appendChild(stats.domElement);
-	}
-
-	function animate() {
-		// note: three.js includes requestAnimationFrame shim
-		requestAnimationFrame(animate);
-		render();
-		stats.update();
 	}
 
 	function render() {

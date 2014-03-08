@@ -1,5 +1,5 @@
 <Alloy>
 	<Window>
-		<Widget src="ti-stl-viewer" stl="test-binary.stl"/>
+		<Widget src="ti-stl-viewer" stl="test-ascii.stl" format="ascii"/>
 	</Window>
 </Alloy>
