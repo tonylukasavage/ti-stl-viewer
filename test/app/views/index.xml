@@ -1,5 +1,13 @@
 <Alloy>
-	<Window>
-		<Widget src="ti-stl-viewer" stl="test-ascii.stl" format="ascii"/>
-	</Window>
+	<NavigationWindow>
+		<Window title="ti-stl-viewer">
+			<LeftNavButton>
+				<Button title="reload" onClick="reloadModel"/>
+			</LeftNavButton>
+			<RightNavButton>
+				<Button title="next" onClick="nextModel"/>
+			</RightNavButton>
+			<Widget id="viewer" src="ti-stl-viewer" stl="test-ascii.stl" format="ascii"/>
+		</Window>
+	</NavigationWindow>
 </Alloy>

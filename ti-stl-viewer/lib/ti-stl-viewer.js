@@ -7,7 +7,7 @@
 ;
 /* jshint +W032 */
 (function() {
-	var camera, scene, renderer, mesh, stats, stlLocation;
+	var camera, scene, renderer, mesh, stats, stlLocation, stlFormat;
 
 	// let's light this candle...
 	init();
@@ -66,14 +66,19 @@
 		Ti.App.addEventListener('ti-stl-viewer:load', function(e) {
 			Ti.API.debug('"' + e.type + '" fired with ' + JSON.stringify(e));
 
-			// Determine what stl location to use
+			// Determine what stl variables to use
 			if (!e.stl && !stlLocation) { return; }
-			stlLocation = '../' + (e.stl || stlLocation).replace(/^\//, '');
-			Ti.API.info('loading stl at "' + stlLocation + '"');
+			stlLocation = e.stl ? '../' + e.stl.replace(/^\//, '') : stlLocation;
+			stlFormat = e.format || (!e.stl && stlFormat) || 'binary';
+			Ti.API.info('loading stl at "' + stlLocation + '" with format "' + stlFormat + '"');
+
+			// remove existing mesh
+			if (scene && mesh) {
+				scene.remove(mesh);
+			}
 
 			// retrieve the stl
-			var format = e.format || 'binary';
-			getStl(format);
+			getStl(stlFormat);
 
 		});
 
@@ -106,8 +111,6 @@
 		stats.domElement.style.top = '0px';
 		document.body.appendChild(stats.domElement);
 	}
-
-
 
 	function parseStlBinary(stl) {
 		var geo = new THREE.Geometry();
@@ -158,9 +161,6 @@
 
 		mesh = new THREE.Mesh(
 			geo,
-			// new THREE.MeshNormalMaterial({
-			//     overdraw:true
-			// }
 			new THREE.MeshLambertMaterial({
 				overdraw: false,
 				color: 0xaa0000,
