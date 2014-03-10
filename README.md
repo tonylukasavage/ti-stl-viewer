@@ -6,6 +6,12 @@ A widget for Appcelerator [Alloy][] that allows you to render and interact with 
 
 ![mobius](http://cl.ly/image/1M1H1n462P3q/Screen%20Shot%202014-03-06%20at%209.50.17%20PM.png)
 
+## Highlights
+
+* Supports both ascii and binary format STLs
+* Supported on iOS
+* Touch interaction
+
 ## Attribution
 
 * [three.js][] used to render the STL models
