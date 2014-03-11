@@ -1,17 +1,11 @@
 var args = arguments[0] || {};
 
-// controller interface
-exports.load = load;
-exports.reload = reload;
-
-// attempt to load stl when widget is initially created
 $.viewer.addEventListener('load', function viewerLoad(e) {
 	$.viewer.removeEventListener('load', viewerLoad);
 	load(args);
 });
 
-// interface implementations
-function load(opts) {
+exports.load = function load(opts) {
 
 	// process options
 	if (!opts) {
@@ -26,7 +20,7 @@ function load(opts) {
 	Ti.App.fireEvent('ti-stl-viewer:load', opts);
 }
 
-function reload() {
+exports.reload = function reload() {
 	load();
 }
 
