@@ -35,7 +35,8 @@ module.exports = function(grunt) {
 				options: {
 					command: 'create',
 					name: TMP_DIR,
-					workspaceDir: '.'
+					workspaceDir: '.',
+					platforms: ['ios']
 				}
 			},
 			build: {
