@@ -7,57 +7,15 @@
 ;
 /* jshint +W032 */
 (function() {
-	var camera, scene, renderer, mesh, stats, stlLocation, stlFormat;
+	var camera, scene, renderer, mesh, stats;
+	var state = {
+		stats: false,
+		animate: false
+	};
 
 	// let's light this candle...
 	init();
 	animate();
-
-	function animate() {
-		// note: three.js includes requestAnimationFrame shim
-		requestAnimationFrame(animate);
-		render();
-		stats.update();
-	}
-
-	function getStl(format) {
-		if (!format || (format !== 'ascii' && format !== 'binary')) {
-			throw new Error('Invalid stl format "' + format + '". Must be "ascii" or "binary"');
-		}
-
-		// create xhr
-		var xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState === 4) {
-				if (xhr.status === 200 || xhr.status === 0) {
-					// xhr.mozResponseArrayBuffer;
-					if (format === 'binary') {
-						parseStlBinary(xhr.response);
-					} else if (format === 'ascii') {
-						parseStlAscii(xhr.responseText);
-					}
-				}
-			}
-		};
-		xhr.onerror = function(e) {
-			throw new Error(e);
-		};
-
-		// open get request
-		xhr.open('GET', stlLocation, true);
-
-		// set headers based on format
-		if (format === 'binary') {
-			xhr.responseType = "arraybuffer";
-		} else {
-			xhr.setRequestHeader("Accept","text/plain");
-			xhr.setRequestHeader("Content-Type","text/plain");
-			xhr.setRequestHeader('charset', 'x-user-defined');
-		}
-
-		// send request
-		xhr.send(null);
-	}
 
 	// initialize the 3D scene
 	function init() {
@@ -65,21 +23,13 @@
 		// listen for the load event
 		Ti.App.addEventListener('ti-stl-viewer:load', function(e) {
 			Ti.API.debug('"' + e.type + '" fired with ' + JSON.stringify(e));
+			load(e);
+		});
 
-			// Determine what stl variables to use
-			if (!e.stl && !stlLocation) { return; }
-			stlLocation = e.stl ? '../' + e.stl.replace(/^\//, '') : stlLocation;
-			stlFormat = e.format || (!e.stl && stlFormat) || 'binary';
-			Ti.API.info('loading stl at "' + stlLocation + '" with format "' + stlFormat + '"');
-
-			// remove existing mesh
-			if (scene && mesh) {
-				scene.remove(mesh);
-			}
-
-			// retrieve the stl
-			getStl(stlFormat);
-
+		// listen for the configure event
+		Ti.App.addEventListener('ti-stl-viewer:configure', function(e) {
+			Ti.API.debug('"' + e.type + '" fired with ' + JSON.stringify(e));
+			configure(e);
 		});
 
 		// create the three.js scene
@@ -107,9 +57,86 @@
 
 		// Add the rendering stats (FPS and such) to the display
 		stats = new Stats();
+		stats.domElement.style.display = state.stats ? 'block' : 'none';
 		stats.domElement.style.position = 'absolute';
 		stats.domElement.style.top = '0px';
 		document.body.appendChild(stats.domElement);
+	}
+
+	function animate() {
+		// note: three.js includes requestAnimationFrame shim
+		requestAnimationFrame(animate);
+		render();
+		if (state.stats) { stats.update(); }
+	}
+
+	// Render an STL model in this WebView
+	function load(opts) {
+		opts = opts || {};
+
+		// make stl location relative to widget
+		var stl = '../' + opts.stl.replace(/^\//, '');
+
+		// make sure we have a valid stl format
+		var format = opts.format || 'binary';
+		if (format !== 'ascii' && format !== 'binary') {
+			throw new Error('Invalid stl format "' + format + '". Must be "ascii" or "binary"');
+		}
+
+		// remove existing mesh
+		if (scene && mesh) {
+			scene.remove(mesh);
+		}
+
+		// retrieve the stl
+		Ti.API.debug('loading stl at "' + stl + '" with format "' + format + '"');
+		fetchStl(stl, format);
+	}
+
+	// toggle configuration settings like animation and stats
+	function configure(opts) {
+		if (typeof opts.animate !== 'undefined') {
+			state.animate = !!opts.animate;
+		}
+		if (typeof opts.stats !== 'undefined') {
+			state.stats = !!opts.stats;
+			stats.domElement.style.display = state.stats ? 'block' : 'none';
+		}
+	}
+
+	function fetchStl(stl, format) {
+
+		// create xhr
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState === 4) {
+				if (xhr.status === 200 || xhr.status === 0) {
+					if (format === 'binary') {
+						parseStlBinary(xhr.response);
+					} else if (format === 'ascii') {
+						parseStlAscii(xhr.responseText);
+					}
+				}
+			}
+		};
+		xhr.onerror = function(e) {
+			throw new Error(e);
+		};
+
+		// open get request
+		xhr.open('GET', stl, true);
+
+		// set headers based on format
+		if (format === 'binary') {
+			xhr.responseType = 'arraybuffer';
+		} else {
+			xhr.setRequestHeader('Accept', 'text/plain');
+			xhr.setRequestHeader('Content-Type', 'text/plain');
+			xhr.setRequestHeader('charset', 'x-user-defined');
+		}
+
+		// send request
+		xhr.send(null);
 	}
 
 	function parseStlBinary(stl) {
@@ -281,7 +308,7 @@
 	}
 
 	function render() {
-		if (mesh) {
+		if (mesh && state.animate) {
 			mesh.rotation.x += 0.01;
 			mesh.rotation.z += 0.02;
 		}

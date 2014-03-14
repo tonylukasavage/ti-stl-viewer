@@ -1,16 +1,21 @@
-var models = [
-	{ stl: 'test-binary.stl' },
-	{ stl: 'test-ascii.stl', format: 'ascii' }
+var loads = [
+	[ 'test-binary.stl' ],
+	[ 'test-ascii.stl', 'ascii' ],
+	[ 'test-ascii.stl', { format: 'ascii' } ]
 ], ctr = 0;
 
-function reloadModel() {
-	$.viewer.reload();
+function nextModel() {
+	if (loads.length === ctr) { ctr = 0; }
+	Ti.API.debug('load() with ' + JSON.stringify(loads[ctr]));
+	$.viewer.load.apply($.viewer, loads[ctr++]);
 }
 
-function nextModel() {
-	ctr++
-	if (models.length === ctr) { ctr = 0; }
-	$.viewer.load(models[ctr]);
+function animate() {
+	$.viewer.animate(!$.viewer.animate());
+}
+
+function stats() {
+	$.viewer.stats(!$.viewer.stats());
 }
 
 $.index.open();

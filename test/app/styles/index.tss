@@ -1,5 +1,26 @@
+'Button': {
+	height: 48,
+	backgroundColor: '#fff',
+	width: '49.75%'
+}
+
 '#index': {
 	backgroundColor: '#fff',
 	fullscreen: true,
 	exitOnClose: true
+}
+
+'#animateButton': {
+	left: 0
+}
+
+'#statsButton': {
+	right: 0
+}
+
+'.footer': {
+	height: 50,
+	width: Ti.UI.FILL,
+	backgroundColor: '#888',
+	bottom: 0
 }

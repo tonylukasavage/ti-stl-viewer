@@ -1,13 +1,17 @@
 <Alloy>
 	<NavigationWindow>
 		<Window title="ti-stl-viewer">
-			<LeftNavButton>
-				<Button title="reload" onClick="reloadModel"/>
-			</LeftNavButton>
 			<RightNavButton>
 				<Button title="next" onClick="nextModel"/>
 			</RightNavButton>
+
 			<Widget id="viewer" src="ti-stl-viewer" stl="test-ascii.stl" format="ascii"/>
+
+			<!-- footer -->
+			<View class="footer">
+				<Button id="animateButton" title="animate()" onClick="animate"/>
+				<Button id="statsButton" title="stats()" onClick="stats"/>
+			</View>
 		</Window>
 	</NavigationWindow>
 </Alloy>
