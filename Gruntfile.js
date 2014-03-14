@@ -42,7 +42,8 @@ module.exports = function(grunt) {
 			build: {
 				options: {
 					command: 'build',
-					projectDir: TMP_DIR
+					projectDir: TMP_DIR,
+					logLevel: 'trace'
 				}
 			}
 		},
